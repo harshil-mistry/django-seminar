@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f3f4f6;
+        }
+        .task-input::placeholder {
+            color: #9ca3af;
+        }
+        .delete-button:hover {
+            background-color: #dc2626;
+        }
+        .task-item span.completed {
+            text-decoration: line-through;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="max-w-lg w-full bg-white shadow-lg rounded-lg p-6">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">✅ Todo List</h1>
+
+        <!-- Task Form -->
+        <form class="flex mb-6" action="{% url 'add_task' %}" method="post">
+            {% csrf_token %}
+            <input 
+                type="text" 
+                name="task" 
+                class="task-input flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                placeholder="Add a new task..." 
+                required
+            />
+            <button type="submit" class="add-button bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-r-lg transition duration-200">
+                Add
+            </button>
+        </form>
+
+        <!-- Task List -->
+        <ul class="task-list space-y-3">
+            {% if tasks %}
+                {% for task in tasks %}
+                    <li class="task-item flex justify-between items-center bg-gray-100 p-3 rounded-lg shadow-sm hover:bg-gray-200 transition duration-150">
+                        <span class="text-gray-800 {% if task.completed %}completed{% endif %}">
+                            {{ task }}
+                        </span>
+                        <a href="{% url 'delete_task' forloop.counter0 %}" 
+                           class="delete-button bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition duration-200">
+                            Delete
+                        </a>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li class="empty-list flex flex-col items-center justify-center py-8 text-gray-500">
+                    <svg class="w-16 h-16 mb-3 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 2m6-10a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p>No tasks yet. Add a task above!</p>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</body>
+</html>
